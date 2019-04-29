@@ -1,0 +1,15 @@
+{
+  "name": "GraphQL-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/graphql": "^14.2.0",
+    "@types/mongodb": "^3.1.25",
+    "graphql": "^14.2.1",
+    "mongodb": "^3.2.3",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^0.17.3",
+    "typescript": "^3.4.5"
+  }
+}
