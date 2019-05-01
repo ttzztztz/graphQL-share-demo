@@ -1,17 +1,17 @@
-import { Resolver, Query, Arg } from "type-graphql";
+import { Resolver, Query, Arg, FieldResolver, Root, Authorized } from "type-graphql";
 import User from "./schema";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectID } from "mongodb";
 
-@Resolver()
+@Resolver(of => User)
 class UserResolver {
     @Query(returns => User)
+    @Authorized()
     async findUser(@Arg("username", { nullable: false }) username: string): Promise<Partial<User>> {
         const client = await MongoClient.connect("mongodb://localhost:27017/demo", {
             useNewUrlParser: true
         });
 
         const db = client.db("demo");
-
         try {
             const userResult: User = await db.collection("user").findOne({
                 username: username
@@ -29,6 +29,26 @@ class UserResolver {
             }, {});
 
             return result;
+        } catch (e) {
+            console.log(e);
+        } finally {
+            await client.close();
+        }
+        return new User();
+    }
+
+    @FieldResolver()
+    async mentor(@Root() user: User): Promise<User> {
+        const client = await MongoClient.connect("mongodb://localhost:27017/demo", {
+            useNewUrlParser: true
+        });
+        const db = client.db("demo");
+        try {
+            const userResult: User = await db.collection("user").findOne({
+                _id: new ObjectID(user.mentor as any)
+            });
+
+            return userResult;
         } catch (e) {
             console.log(e);
         } finally {
